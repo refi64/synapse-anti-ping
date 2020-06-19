@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "synapse-anti-ping"
+# Keep in sync with setup.py
+version = "0.1.0"
+description = "A Synapse antispam module to defeat mass spam and pings"
+authors = ["Ryan Gonzalez <rymg19@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+marshmallow = "^3.6.1"
+marshmallow-dataclass = "^7.6.0"
+matrix-nio = "^0.13.0"
+twisted = "^20.3.0"
+
+[tool.poetry.dev-dependencies]
+mypy = "^0.780"
+pytest = "^5.4.3"
+yapf = "^0.30.0"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

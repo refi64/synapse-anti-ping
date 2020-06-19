@@ -1,0 +1,4 @@
+*
+!requirements.txt
+!setup.py
+!synapse_anti_ping/*.py
