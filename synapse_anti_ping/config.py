@@ -83,8 +83,8 @@ class Config:
     log: LogConfig
     user: UserConfig
 
-    rooms: RoomsConfig
-    members: MembersConfig
+    rooms: RoomsConfig = RoomsConfig()
+    members: MembersConfig = MembersConfig()
 
     offences: OffencesConfig = OffencesConfig()
 
