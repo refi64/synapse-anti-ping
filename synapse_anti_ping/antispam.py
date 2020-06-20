@@ -5,6 +5,9 @@ from typing import cast
 from datetime import datetime, timedelta, timezone
 from twisted.internet import task  # type: ignore
 
+if TYPE_CHECKING:
+    from .spam_checker_api import SpamCheckerApi
+
 import collections
 import logging
 
@@ -18,9 +21,12 @@ logger = logging.getLogger('synapse_anti_ping.antispam')
 
 
 class AntiSpam:
-    def __init__(self, config: Config, api: Any):
+    def __init__(self, config: Config, api: 'SpamCheckerApi'):
         self.api = api
         self.config = config
+
+        if self.config.user.homeserver is None:
+            self.config.user.homeserver = self.api.hs.config.public_baseurl
 
         self.matrix = Matrix(self.config)
         self.matrix.start()
@@ -51,6 +57,10 @@ class AntiSpam:
         for offender in to_remove:
             del self.offenders[offender]
 
+    @property
+    def full_user(self) -> str:
+        return f'@{self.config.user.user}:{self.api.hs.config.server_name}'
+
     @staticmethod
     def parse_config(data: Dict[str, Any]) -> Config:
         return Config.from_data(data)
@@ -69,13 +79,14 @@ class AntiSpam:
             return False
 
         room_id = safe_cast(str, event['room_id'])
-        if (self.include_rooms.match(room_id) is None
+        if (not room_id.endswith(f':{self.api.hs.config.server_name}')
+                or self.include_rooms.match(room_id) is None
                 or self.exclude_rooms.match(room_id) is not None or room_id == self.config.log.room
                 or room_id == self.config.mjolnir.room):
             return False
 
         sender = safe_cast(str, event['sender'])
-        if self.exclude_members.match(sender) is not None:
+        if (self.exclude_members.match(sender) is not None or sender == self.full_user):
             return False
 
         ms = safe_cast(int, event['origin_server_ts'])
@@ -116,8 +127,8 @@ class AntiSpam:
             classifier = self._classify_offences(data.offences)
             if classifier == OffenceListClassifier.BAN:
                 if data.state < OffenderState.BANNED:
-                    logger.info(f'Ban on {sender}')
-                    self.matrix.send_message(f'{sender} was banned for spam',
+                    logger.info(f'Ban on {sender} room {room_id}')
+                    self.matrix.send_message(f'{sender} was banned for spam in {room_id}',
                                              room=self.config.log.room,
                                              notice=True)
                     self.mjolnir.ban(sender)
@@ -125,13 +136,13 @@ class AntiSpam:
                 return True
             elif classifier == OffenceListClassifier.SPAM:
                 if data.state < OffenderState.ALERTED:
-                    logger.info(f'Spam on {sender}')
-                    self.matrix.send_message(f'{sender} was submitting spam',
+                    logger.info(f'Spam on {sender} from {room_id}')
+                    self.matrix.send_message(f'{sender} was submitting spam in {room_id}',
                                              room=self.config.log.room,
                                              notice=True)
 
                     alert = f'{sender} {self.config.offences.spam_alert}'
-                    formatted = (f'<a href="https://matrix.to/#/{sender}">'
+                    formatted = (f'<a href="https://matrix.to/#/{sender}">{sender}</a>'
                                  f' {self.config.offences.spam_alert}')
                     self.matrix.send_message(alert, room=room_id, formatted=formatted)
                     data.state = OffenderState.ALERTED

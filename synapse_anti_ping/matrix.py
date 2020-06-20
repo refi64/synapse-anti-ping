@@ -21,6 +21,8 @@ class Matrix:
         self._init_event = asyncio.Event()
 
         self._config = config
+
+        assert config.user.homeserver is not None
         self._client = nio.AsyncClient(config.user.homeserver, config.user.user)
 
     def start(self) -> None:

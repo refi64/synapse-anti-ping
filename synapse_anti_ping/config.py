@@ -21,10 +21,11 @@ class LogConfig:
 
 @dataclass
 class UserConfig:
+    # Order is dumb to follow dataclass restraints
     password: str
-    homeserver: str
     user: str = dataclasses.field(
         metadata={'validate': marshmallow.validate.Regexp(r'^[a-z0-9._=\-/]+$')})
+    homeserver: Optional[str] = None
 
 
 @dataclass
