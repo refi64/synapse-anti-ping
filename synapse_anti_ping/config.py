@@ -43,7 +43,7 @@ class OffenceConfig:
 
 @dataclass
 class MassMentionsConfig(OffenceConfig):
-    upgrade_at: int = 5
+    upgrade_at: int = 4
 
 
 @dataclass
@@ -56,7 +56,7 @@ class Limits:
 class OffencesConfig:
     text_spam: OffenceConfig = OffenceConfig(enabled=True, weight=2, expires_minutes=0.5)
     media_spam: OffenceConfig = OffenceConfig(enabled=True, weight=4, expires_minutes=0.5)
-    mentions: OffenceConfig = OffenceConfig(enabled=True, weight=5, expires_minutes=0.5)
+    mentions: OffenceConfig = OffenceConfig(enabled=True, weight=4, expires_minutes=0.5)
     mass_mentions: MassMentionsConfig = MassMentionsConfig(enabled=True,
                                                            weight=10,
                                                            expires_minutes=1)
