@@ -1,4 +1,4 @@
-FROM matrixdotorg/synapse:latest-py3
+FROM matrixdotorg/synapse:v1.17.0-py3
 
 RUN apk add git && \
   pip3 install --no-cache-dir -e 'git+https://github.com/matrix-org/mjolnir.git#egg=mjolnir&subdirectory=synapse_antispam' && \
