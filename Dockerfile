@@ -1,4 +1,4 @@
-FROM matrixdotorg/synapse:v1.19.1
+FROM matrixdotorg/synapse:v1.20.0
 
 COPY . /synapse_anti_ping/
 RUN apt-get update && apt-get install -y build-essential git && \
