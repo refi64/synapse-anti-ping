@@ -54,7 +54,7 @@ class Limits:
 
 @dataclass
 class OffencesConfig:
-    text_spam: OffenceConfig = OffenceConfig(enabled=True, weight=2, expires_minutes=0.5)
+    text_spam: OffenceConfig = OffenceConfig(enabled=True, weight=2, expires_minutes=0.4)
     media_spam: OffenceConfig = OffenceConfig(enabled=True, weight=4, expires_minutes=0.5)
     mentions: OffenceConfig = OffenceConfig(enabled=True, weight=4, expires_minutes=0.5)
     mass_mentions: MassMentionsConfig = MassMentionsConfig(enabled=True,

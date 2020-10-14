@@ -187,14 +187,14 @@ offences:
   text_spam:
     enabled: true
     weight: 2
-    expires_minutes: 0.5
+    expires_minutes: 0.4
   media_spam:
     enabled: true
     weight: 4
     expires_minutes: 0.5
   mentions:
     enabled: true
-    weight: 5
+    weight: 4
     expires_minutes: 0.5
   mass_mentions:
     enabled: true
